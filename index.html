@@ -3,344 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot Interface</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Smart AI Password Generator</title>
     <style>
-        :root {
-            --primary-color: #2d3748;
-            --secondary-color: #4a5568;
-            --accent-color: #4299e1;
-            --background-color: #f7fafc;
-            --chat-bot-bg: #ebf8ff;
-            --chat-user-bg: #e2e8f0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
         body {
-            background-color: var(--background-color);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .container {
-            max-width: 1200px;
+            font-family: Arial, sans-serif;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            background-color: #f0f0f0;
         }
-
-        .header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
-            margin-bottom: 20px;
-        }
-
-        .chat-container {
-            flex: 1;
+        .container {
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
             padding: 20px;
-        }
-
-        .message {
-            margin-bottom: 20px;
-            max-width: 80%;
-            padding: 15px;
-            border-radius: 15px;
-            position: relative;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .bot-message {
-            background-color: var(--chat-bot-bg);
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-        }
-
-        .user-message {
-            background-color: var(--chat-user-bg);
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
-        }
-
-        .message-time {
-            font-size: 0.7rem;
-            color: var(--secondary-color);
-            margin-top: 5px;
-        }
-
-        .input-container {
-            padding: 20px;
-            background-color: white;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 10px;
-        }
-
-        .input-field {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #e2e8f0;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--accent-color);
+        .input-group {
+            margin-bottom: 15px;
         }
-
-        .send-button {
-            padding: 12px 24px;
-            background-color: var(--accent-color);
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            padding: 8px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
             color: white;
+            padding: 10px 15px;
             border: none;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
+            width: 100%;
         }
-
-        .send-button:hover {
-            background-color: #3182ce;
+        button:hover {
+            background-color: #45a049;
         }
-
-        .send-button:disabled {
-            background-color: #cbd5e0;
-            cursor: not-allowed;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .control-button {
-            padding: 8px 16px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .control-button:hover {
-            background-color: var(--primary-color);
-        }
-
-        .typing-indicator {
-            display: none;
+        #password {
+            margin-top: 20px;
             padding: 15px;
-            background-color: var(--chat-bot-bg);
-            border-radius: 15px;
-            margin-bottom: 20px;
-            max-width: 100px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            word-break: break-all;
+            font-size: 16px;
         }
-
-        .typing-indicator span {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--secondary-color);
-            border-radius: 50%;
-            margin-right: 5px;
-            animation: bounce 1.4s infinite ease-in-out;
+        .strength-meter {
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
         }
-
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
+        .strength-meter div {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s;
         }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            .message {
-                max-width: 90%;
-            }
+        .password-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>AI Chatbot</h1>
+        <h1>Smart AI Password Generator</h1>
+        <div class="input-group">
+            <label for="category">Password Category:</label>
+            <select id="category">
+                <option value="tech">Technology</option>
+                <option value="nature">Nature</option>
+                <option value="science">Science</option>
+                <option value="space">Space</option>
+                <option value="fantasy">Fantasy</option>
+            </select>
         </div>
-        <div class="controls">
-            <button class="control-button" onclick="clearChat()">Clear Chat</button>
-            <button class="control-button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <div class="input-group">
+            <label for="length">Password Length:</label>
+            <input type="number" id="length" min="8" max="50" value="12">
         </div>
-        <div class="chat-container">
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot-message">
-                    Hello! I'm your AI assistant. How can I help you today?
-                    <div class="message-time">Now</div>
-                </div>
-            </div>
-            <div class="typing-indicator" id="typingIndicator">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="input-container">
-                <input type="text" class="input-field" id="userInput" placeholder="Type your message here..." autocomplete="off">
-                <button class="send-button" onclick="sendMessage()" id="sendButton">Send</button>
-            </div>
+        <div class="input-group">
+            <label for="strength">Password Strength:</label>
+            <select id="strength">
+                <option value="1">Basic (Letters only)</option>
+                <option value="2">Medium (Letters + Numbers)</option>
+                <option value="3" selected>Strong (Letters + Numbers + Symbols)</option>
+                <option value="4">Ultra (Complex Pattern)</option>
+            </select>
         </div>
+        <button onclick="generateAIPassword()">Generate Smart Password</button>
+        <div id="password"></div>
+        <div class="strength-meter">
+            <div id="meter"></div>
+        </div>
+        <div id="password-info" class="password-info"></div>
     </div>
 
     <script>
-        // Store your API key securely (preferably on the server side)
-        const API_KEY = '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'; // Replace with your actual API key
-        let conversationHistory = [];
-        
-        // Event listener for Enter key
-        document.getElementById('userInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
+        // AI-driven word bases for different categories
+        const wordBases = {
+            tech: ['Quantum', 'Cyber', 'Neural', 'Data', 'Cloud', 'Code', 'Binary', 'Crypto', 'Tech', 'Smart', 'Bot', 'Web'],
+            nature: ['Forest', 'Ocean', 'Mountain', 'River', 'Eagle', 'Wolf', 'Tree', 'Sky', 'Storm', 'Wind'],
+            science: ['Atom', 'Proton', 'Element', 'Energy', 'Plasma', 'Light', 'Wave', 'Lab', 'Bio'],
+            space: ['Galaxy', 'Star', 'Nova', 'Cosmos', 'Nebula', 'Planet', 'Orbit', 'Solar', 'Moon'],
+            fantasy: ['Dragon', 'Magic', 'Wizard', 'Crystal', 'Mystic', 'Legend', 'Shadow', 'Spirit']
+        };
 
-        function showTypingIndicator() {
-            const typingIndicator = document.getElementById('typingIndicator');
-            typingIndicator.style.display = 'block';
-        }
+        const commonWords = ['Power', 'Master', 'Super', 'Ultra', 'Mega', 'Prime', 'Elite'];
 
-        function hideTypingIndicator() {
-            const typingIndicator = document.getElementById('typingIndicator');
-            typingIndicator.style.display = 'none';
-        }
-
-        async function sendMessage() {
-            const userInput = document.getElementById('userInput');
-            const message = userInput.value.trim();
+        function generateAIPassword() {
+            const category = document.getElementById('category').value;
+            const length = parseInt(document.getElementById('length').value);
+            const strength = parseInt(document.getElementById('strength').value);
             
-            if (!message) return;
-
-            // Disable input and button while processing
-            userInput.disabled = true;
-            document.getElementById('sendButton').disabled = true;
-
-            // Add user message to chat
-            addMessageToChat('user', message);
-            userInput.value = '';
-
-            // Show typing indicator
-            showTypingIndicator();
-
-            try {
-                // Add to conversation history
-                conversationHistory.push({
-                    role: "user",
-                    content: message
-                });
-
-                // Make API call to OpenAI
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-3.5-turbo",
-                        messages: conversationHistory,
-                        temperature: 0.7
-                    })
-                });
-
-                const data = await response.json();
-                const aiResponse = data.choices[0].message.content;
-
-                // Add AI response to conversation history
-                conversationHistory.push({
-                    role: "assistant",
-                    content: aiResponse
-                });
-
-                // Hide typing indicator and add AI response
-                hideTypingIndicator();
-                addMessageToChat('bot', aiResponse);
-
-            } catch (error) {
-                console.error('Error:', error);
-                hideTypingIndicator();
-                addMessageToChat('bot', 'Sorry, I encountered an error. Please try again.');
+            // Validate inputs
+            if (length < 8) {
+                alert('Password length must be at least 8 characters');
+                return;
             }
 
-            // Re-enable input and button
-            userInput.disabled = false;
-            document.getElementById('sendButton').disabled = false;
-            userInput.focus();
+            // Get base words for selected category
+            const baseWords = [...wordBases[category], ...commonWords];
+            
+            // Generate base password
+            let password = '';
+            const word1 = baseWords[Math.floor(Math.random() * baseWords.length)];
+            const word2 = baseWords[Math.floor(Math.random() * baseWords.length)];
+            
+            password = word1 + word2;
+
+            // Add complexity based on strength
+            switch(strength) {
+                case 1: // Basic
+                    password = addVariation(password, false, false);
+                    break;
+                case 2: // Medium
+                    password = addVariation(password, true, false);
+                    break;
+                case 3: // Strong
+                    password = addVariation(password, true, true);
+                    break;
+                case 4: // Ultra
+                    password = addUltraVariation(password);
+                    break;
+            }
+
+            // Ensure password meets length requirement
+            while (password.length < length) {
+                password += Math.floor(Math.random() * 10);
+            }
+
+            // Trim if too long
+            if (password.length > length) {
+                password = password.substring(0, length);
+            }
+
+            // Update UI
+            document.getElementById('password').textContent = password;
+            updateStrengthMeter(strength);
+            updatePasswordInfo(password, strength);
         }
 
-        function addMessageToChat(sender, message) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}-message`;
+        function addVariation(password, includeNumbers, includeSymbols) {
+            password = password.replace(/[aA]/g, '@');
+            password = password.replace(/[eE]/g, '3');
+            password = password.replace(/[iI]/g, '1');
+            password = password.replace(/[oO]/g, '0');
+            password = password.replace(/[sS]/g, '$');
             
-            const messageText = document.createElement('div');
-            messageText.textContent = message;
+            if (includeNumbers) {
+                password += Math.floor(Math.random() * 1000);
+            }
             
-            const timeDiv = document.createElement('div');
-            timeDiv.className = 'message-time';
-            timeDiv.textContent = new Date().toLocaleTimeString();
+            if (includeSymbols) {
+                const symbols = ['!', '@', '#', '$', '%', '&', '*'];
+                password += symbols[Math.floor(Math.random() * symbols.length)];
+            }
             
-            messageDiv.appendChild(messageText);
-            messageDiv.appendChild(timeDiv);
-            
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return password;
         }
 
-        function clearChat() {
-            const chatMessages = document.getElementById('chatMessages');
-            chatMessages.innerHTML = '';
-            conversationHistory = [];
-            addMessageToChat('bot', 'Chat history has been cleared. How can I help you?');
+        function addUltraVariation(password) {
+            const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            password = password.split('').map(char => {
+                if (Math.random() > 0.5) return char.toUpperCase();
+                return char;
+            }).join('');
+            
+            password += specialChars[Math.floor(Math.random() * specialChars.length)];
+            password += Date.now().toString().slice(-4);
+            return password;
         }
 
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            // Add your dark mode implementation here
+        function updateStrengthMeter(strength) {
+            const meter = document.getElementById('meter');
+            const percentage = (strength / 4) * 100;
+            meter.style.width = percentage + '%';
+            meter.style.backgroundColor = 
+                strength === 1 ? '#ff4444' :
+                strength === 2 ? '#ffbb33' :
+                strength === 3 ? '#00C851' :
+                '#33b5e5';
         }
 
-        // Auto-focus the input field when the page loads
-        document.getElementById('userInput').focus();
+        function updatePasswordInfo(password, strength) {
+            const info = document.getElementById('password-info');
+            const strengthTexts = [
+                'Basic: Letters only',
+                'Medium: Letters and numbers',
+                'Strong: Letters, numbers, and symbols',
+                'Ultra: Complex pattern with special characters'
+            ];
+            
+            info.innerHTML = `
+                <strong>Password Strength:</strong> ${strengthTexts[strength-1]}<br>
+                <strong>Length:</strong> ${password.length} characters<br>
+                <strong>Category:</strong> ${document.getElementById('category').value}
+            `;
+        }
     </script>
 </body>
 </html>
